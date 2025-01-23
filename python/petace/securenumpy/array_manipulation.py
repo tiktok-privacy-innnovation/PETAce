@@ -15,10 +15,13 @@
 import collections
 from typing import List, Union, Tuple
 
-from .core import SecureArray, get_vm
+from petace.backend import PETAceBackendType
+
+from .core import SecureArray, get_engine, support_backends
 from .exceptions import AxisError
 
 
+@support_backends([PETAceBackendType.Duet])
 def vstack(arrays: Union[List[SecureArray], Tuple[SecureArray]]) -> SecureArray:
     """
     Stack arrays in sequence vertically (row wise).
@@ -37,11 +40,12 @@ def vstack(arrays: Union[List[SecureArray], Tuple[SecureArray]]) -> SecureArray:
         raise ValueError("need at least one array to concatenate")
     if not isinstance(arrays, collections.Iterable):
         raise TypeError("Input must be an iterable")
-    vm = get_vm()
+    vm = get_engine()
     ret = vm.vstack([i.buffer for i in arrays])
     return SecureArray(ret)
 
 
+@support_backends([PETAceBackendType.Duet])
 def hstack(arrays: Union[List[SecureArray], Tuple[SecureArray]]) -> SecureArray:
     """
     Stack arrays in sequence horizontally (column wise).
@@ -60,11 +64,12 @@ def hstack(arrays: Union[List[SecureArray], Tuple[SecureArray]]) -> SecureArray:
         raise ValueError("need at least one array to concatenate")
     if not isinstance(arrays, collections.Iterable):
         raise TypeError("Input must be an iterable")
-    vm = get_vm()
+    vm = get_engine()
     ret = vm.hstack([i.buffer for i in arrays])
     return SecureArray(ret)
 
 
+@support_backends([PETAceBackendType.Duet])
 def column_stack(tup: Union[List[SecureArray], Tuple[SecureArray]]) -> SecureArray:
     """
     Stack 1-D arrays as columns into a 2-D array.
@@ -87,6 +92,7 @@ def column_stack(tup: Union[List[SecureArray], Tuple[SecureArray]]) -> SecureArr
     return hstack(tup)
 
 
+@support_backends([PETAceBackendType.Duet])
 def row_stack(tup: Union[List[SecureArray], Tuple[SecureArray]]) -> SecureArray:
     """
     Stack arrays in sequence vertically (row wise).
@@ -106,6 +112,7 @@ def row_stack(tup: Union[List[SecureArray], Tuple[SecureArray]]) -> SecureArray:
     return vstack(tup)
 
 
+@support_backends([PETAceBackendType.Duet])
 def concatenate(arrays: Union[List[SecureArray], Tuple[SecureArray]], axis: int = 0) -> SecureArray:
     """
     Join a sequence of arrays along an existing axis.
@@ -140,6 +147,7 @@ def concatenate(arrays: Union[List[SecureArray], Tuple[SecureArray]], axis: int 
     raise ValueError("concatenate only support 0d, 1d, 2d arrays")
 
 
+@support_backends([PETAceBackendType.Duet])
 def reshape(arr: SecureArray, new_shape) -> SecureArray:
     """
     Gives a new shape to an array without changing its data.
@@ -159,6 +167,7 @@ def reshape(arr: SecureArray, new_shape) -> SecureArray:
     return arr.reshape(new_shape)
 
 
+@support_backends([PETAceBackendType.Duet])
 def resize(arr: SecureArray, new_shape: Union[int, Tuple[int]]) -> SecureArray:
     """
     Return a new array with the specified shape.

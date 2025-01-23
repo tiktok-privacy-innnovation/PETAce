@@ -15,7 +15,8 @@
 import numpy as numpy_np
 import petace.securenumpy as np
 from petace.network import NetParams, NetScheme, NetFactory
-from petace.duet import VM
+from petace.backend.duet import DuetVM
+from petace.engine import PETAceEngine
 
 
 class LinearRegressionGD:
@@ -77,8 +78,9 @@ if __name__ == '__main__':
 
     # init mpc engine
     net = NetFactory.get_instance().build(NetScheme.SOCKET, net_params)
-    vm = VM(net, party)
-    np.set_vm(vm)
+    duet = DuetVM(net, party)
+    engine = PETAceEngine(duet)
+    np.set_engine(engine)
 
     # prepare data
     numpy_np.random.seed(43)

@@ -12,32 +12,32 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from petace.securenumpy import SecureArray, get_vm
+from petace.securenumpy import SecureArray, get_engine
 
 
 def groupby_sum(x: SecureArray, encoding: SecureArray) -> SecureArray:
-    vm = x.vm
-    output = vm.new_share((x.shape[1], encoding.shape[1]), x.dtype)
-    vm.execute_code("groupby_sum", [x.buffer, encoding.buffer, output])
+    engine = get_engine()
+    output = engine.new_share((x.shape[1], encoding.shape[1]), x.dtype)
+    engine.execute_code("groupby_sum", [x.buffer, encoding.buffer, output])
     return SecureArray(output)
 
 
 def groupby_count(x: SecureArray, encoding: SecureArray) -> SecureArray:
-    vm = get_vm()
-    output = vm.new_share((x.shape[1], encoding.shape[1]), x.dtype)
-    vm.execute_code("groupby_count", [x.buffer, encoding.buffer, output])
+    engine = get_engine()
+    output = engine.new_share((x.shape[1], encoding.shape[1]), x.dtype)
+    engine.execute_code("groupby_count", [x.buffer, encoding.buffer, output])
     return SecureArray(output)
 
 
 def groupby_max(x: SecureArray, encoding: SecureArray) -> SecureArray:
-    vm = x.vm
-    output = vm.new_share((x.shape[1], encoding.shape[1]), x.dtype)
-    vm.execute_code("groupby_max", [x.buffer, encoding.buffer, output])
+    engine = get_engine()
+    output = engine.new_share((x.shape[1], encoding.shape[1]), x.dtype)
+    engine.execute_code("groupby_max", [x.buffer, encoding.buffer, output])
     return SecureArray(output)
 
 
 def groupby_min(x: SecureArray, encoding: SecureArray) -> SecureArray:
-    vm = get_vm()
-    output = vm.new_share((x.shape[1], encoding.shape[1]), x.dtype)
-    vm.execute_code("groupby_min", [x.buffer, encoding.buffer, output])
+    engine = get_engine()
+    output = engine.new_share((x.shape[1], encoding.shape[1]), x.dtype)
+    engine.execute_code("groupby_min", [x.buffer, encoding.buffer, output])
     return SecureArray(output)

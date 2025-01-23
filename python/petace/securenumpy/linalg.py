@@ -12,10 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .core import SecureArray
+from petace.backend import PETAceBackendType
+
+from .core import SecureArray, support_backends
 from .math import sum
 
 
+@support_backends([PETAceBackendType.Duet])
 def inner(a: SecureArray, b: SecureArray) -> SecureArray:
     """
     Inner product of two arrays.
@@ -38,6 +41,7 @@ def inner(a: SecureArray, b: SecureArray) -> SecureArray:
     raise NotImplementedError
 
 
+@support_backends([PETAceBackendType.Duet])
 def dot(a: SecureArray, b: SecureArray) -> SecureArray:
     """
     Dot product of two arrays.

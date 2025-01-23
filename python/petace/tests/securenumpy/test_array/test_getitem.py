@@ -12,13 +12,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os
+
+import pytest
 import numpy as np
 import numpy.testing as npt
 
 import petace.securenumpy as snp
+from petace.backend import PETAceBackendType
 from petace.tests.utils import SnpTestBase
 
 
+@pytest.mark.skipif(os.environ.get("PETACE_ENGINE_BACKEND", "duet") != PETAceBackendType.Duet,
+                    reason="unsupported backend")
 class TestGetItem(SnpTestBase):
 
     def test_1d(self, party_id):

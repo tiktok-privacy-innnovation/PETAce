@@ -7,6 +7,8 @@ cmake/*Targets.cmake
 .vscode
 CMakeSettings.json
 
+.idea/
+
 # Build
 bin/
 lib/
@@ -619,3 +621,7 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+python/petace/bigdata/test_data/*
+python/petace/tests/bigdata/test_data/*
+python/petace/tests/setops/test_data/*

@@ -12,13 +12,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os
+
+import pytest
 import numpy as np
 import numpy.testing as npt
 
 import petace.securenumpy as snp
+from petace.backend import PETAceBackendType
 from petace.tests.utils import SnpTestBase
 
 
+@pytest.mark.skipif(os.environ.get("PETACE_ENGINE_BACKEND", "duet") != PETAceBackendType.Duet,
+                    reason="unsupported backend")
 class TestArgmaxMax(SnpTestBase):
 
     def test_2d(self, party_id):
@@ -45,6 +51,8 @@ class TestArgmaxMax(SnpTestBase):
             npt.assert_almost_equal(p2, np.max(data_a), decimal=5)
 
 
+@pytest.mark.skipif(os.environ.get("PETACE_ENGINE_BACKEND", "duet") != PETAceBackendType.Duet,
+                    reason="unsupported backend")
 class TestArgminMin(SnpTestBase):
 
     def test_2d(self, party_id):
@@ -71,6 +79,8 @@ class TestArgminMin(SnpTestBase):
             npt.assert_almost_equal(p2, np.min(data_a), decimal=5)
 
 
+@pytest.mark.skipif(os.environ.get("PETACE_ENGINE_BACKEND", "duet") != PETAceBackendType.Duet,
+                    reason="unsupported backend")
 class TestArgmax(SnpTestBase):
 
     def test_basic(self, party_id):
@@ -83,6 +93,8 @@ class TestArgmax(SnpTestBase):
             npt.assert_equal(p1, np.argmax(data_a, axis=0))
 
 
+@pytest.mark.skipif(os.environ.get("PETACE_ENGINE_BACKEND", "duet") != PETAceBackendType.Duet,
+                    reason="unsupported backend")
 class TestArgmin(SnpTestBase):
 
     def test_basic(self, party_id):

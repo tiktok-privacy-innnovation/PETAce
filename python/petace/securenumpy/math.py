@@ -12,10 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .core import SecureArray
+from petace.backend import PETAceBackendType
+
+from .core import SecureArray, support_backends
 from .sort_search import argmax_and_max
 
 
+@support_backends([PETAceBackendType.Duet])
 def sum(arr: SecureArray, axis: int = None) -> SecureArray:
     """
     Sum of array elements over a given axis.
@@ -53,6 +56,7 @@ def sum(arr: SecureArray, axis: int = None) -> SecureArray:
     return res
 
 
+@support_backends([PETAceBackendType.Duet])
 def max(arr: SecureArray, axis: int = None) -> SecureArray:
     """
     Return the maximum of an array or the maximum along an axis.
@@ -73,6 +77,7 @@ def max(arr: SecureArray, axis: int = None) -> SecureArray:
     return max_value
 
 
+@support_backends([PETAceBackendType.Duet])
 def min(arr: SecureArray, axis: int = None) -> SecureArray:
     """Return the minimum of an array or the minimum along an axis.
 
@@ -92,6 +97,7 @@ def min(arr: SecureArray, axis: int = None) -> SecureArray:
     return -min_value
 
 
+@support_backends([PETAceBackendType.Duet])
 def prod(arr: SecureArray, axis: int = None) -> SecureArray:
     """
     Return the product of array elements over a given axis.

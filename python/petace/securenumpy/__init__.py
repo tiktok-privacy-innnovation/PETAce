@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .core import SecureArray, set_vm, get_vm
+from .core import SecureArray, set_engine, get_engine
 from .array_manipulation import (
     vstack,
     hstack,

@@ -23,7 +23,7 @@ class TestAdd(SnpTestBase):
 
     def test_add_plain(self, party_id):
         np.random.seed(43)
-        c0 = snp.arange(10).reshape((2, 5))
+        c0 = snp.array(np.arange(10).reshape((2, 5)), 0)
         p0 = np.random.random((2, 5))
         res = c0 + p0
         res2 = p0 + c0
@@ -35,7 +35,7 @@ class TestAdd(SnpTestBase):
 
     def test_add_scalar(self, party_id):
         np.random.seed(43)
-        c0 = snp.arange(10).reshape((2, 5))
+        c0 = snp.array(np.arange(10).reshape((2, 5)), 0)
         res = c0 + 1
         res2 = 1 + c0
         res_plain = res.reveal_to(0)
@@ -65,7 +65,7 @@ class TestSub(SnpTestBase):
 
     def test_sub_plain(self, party_id):
         np.random.seed(43)
-        c0 = snp.arange(10).reshape((2, 5))
+        c0 = snp.array(np.arange(10).reshape((2, 5)), 0)
         p0 = np.random.random((2, 5))
         res = c0 - p0
         res2 = p0 - c0
@@ -77,7 +77,7 @@ class TestSub(SnpTestBase):
 
     def test_sub_scalar(self, party_id):
         np.random.seed(43)
-        c0 = snp.arange(10).reshape((2, 5))
+        c0 = snp.array(np.arange(10).reshape((2, 5)), 0)
         res = c0 - 1
         res2 = 1 - c0
         res_plain = res.reveal_to(0)
@@ -107,7 +107,7 @@ class TestMul(SnpTestBase):
 
     def test_mul_plain(self, party_id):
         np.random.seed(43)
-        c0 = snp.arange(10).reshape((2, 5))
+        c0 = snp.array(np.arange(10).reshape((2, 5)), 0)
         p0 = np.random.random((2, 5))
         res = c0 * p0
         res2 = p0 * c0
@@ -119,7 +119,7 @@ class TestMul(SnpTestBase):
 
     def test_sub_scalar(self, party_id):
         np.random.seed(43)
-        c0 = snp.arange(10).reshape((2, 5))
+        c0 = snp.array(np.arange(10).reshape((2, 5)), 0)
         res = c0 * 1
         res2 = 1 * c0
         res_plain = res.reveal_to(0)
@@ -149,7 +149,7 @@ class TestDiv(SnpTestBase):
 
     def test_div_plain(self, party_id):
         np.random.seed(43)
-        c0 = snp.arange(20, 30).reshape((2, 5))
+        c0 = snp.array(np.arange(20, 30).reshape((2, 5)), 0)
         p0 = np.arange(10, 20).reshape((2, 5))
         res = c0 / p0
         res2 = p0 / c0
@@ -161,7 +161,7 @@ class TestDiv(SnpTestBase):
 
     def test_div_scalar(self, party_id):
         np.random.seed(43)
-        c0 = snp.arange(10, 20).reshape((2, 5))
+        c0 = snp.array(np.arange(10, 20).reshape((2, 5)), 0)
         res = c0 / 1
         res2 = 1 / c0
         res_plain = res.reveal_to(0)

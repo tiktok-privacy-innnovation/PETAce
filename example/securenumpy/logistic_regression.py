@@ -16,7 +16,8 @@ import numpy as np
 import petace.securenumpy as snp
 import petace.secureml as sml
 from petace.network import NetParams, NetScheme, NetFactory
-from petace.duet import VM
+from petace.backend.duet import DuetVM
+from petace.engine import PETAceEngine
 
 
 class LogisticRegression:
@@ -84,8 +85,9 @@ if __name__ == '__main__':
 
     # init mpc engine
     net = NetFactory.get_instance().build(NetScheme.SOCKET, net_params)
-    vm = VM(net, party)
-    snp.set_vm(vm)
+    duet = DuetVM(net, party)
+    engine = PETAceEngine(duet)
+    snp.set_engine(engine)
 
     # prepare data
     np.random.seed(43)

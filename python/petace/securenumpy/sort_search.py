@@ -13,7 +13,10 @@
 # limitations under the License.
 
 from typing import Tuple
-from .core import SecureArray, get_vm
+
+from petace.backend import PETAceBackendType
+
+from .core import SecureArray, get_engine, support_backends
 from .exceptions import AxisError
 
 
@@ -37,12 +40,13 @@ def where(cond: SecureArray, x: SecureArray, y: SecureArray) -> SecureArray:
     """
     if cond.shape != x.shape or cond.shape != y.shape:
         raise ValueError("cond, x, y must have the same shape")
-    vm = get_vm()
+    vm = get_engine()
     ret = vm.new_share(x.buffer.shape, x.dtype)
     vm.execute_code("multiplexer", [cond.buffer, y.buffer, x.buffer, ret])
     return SecureArray(ret)
 
 
+@support_backends([PETAceBackendType.Duet])
 def argmax_and_max(arr: SecureArray, axis: int = None) -> Tuple[SecureArray, SecureArray]:
     """
     Returns the indices of the maximum values and maximum values along an axis.
@@ -73,7 +77,7 @@ def argmax_and_max(arr: SecureArray, axis: int = None) -> Tuple[SecureArray, Sec
         arr = arr.reshape((-1, 1))
     if axis == 1:
         arr = arr.transpose()
-    vm = get_vm()
+    vm = get_engine()
     if arr.ndim == 2:
         shape = (arr.buffer.shape[1],)
     else:
@@ -84,6 +88,7 @@ def argmax_and_max(arr: SecureArray, axis: int = None) -> Tuple[SecureArray, Sec
     return SecureArray(max_index), SecureArray(max_value)
 
 
+@support_backends([PETAceBackendType.Duet])
 def argmin_and_min(arr: SecureArray, axis: int = None) -> Tuple[SecureArray, SecureArray]:
     """
     Returns the indices of the minimum values and minimum values along an axis.
@@ -110,6 +115,7 @@ def argmin_and_min(arr: SecureArray, axis: int = None) -> Tuple[SecureArray, Sec
     return min_index, -min_value
 
 
+@support_backends([PETAceBackendType.Duet])
 def argmax(arr: SecureArray, axis: int = None) -> SecureArray:
     """
     Returns the indices of the maximum values along an axis.
@@ -130,6 +136,7 @@ def argmax(arr: SecureArray, axis: int = None) -> SecureArray:
     return max_index
 
 
+@support_backends([PETAceBackendType.Duet])
 def argmin(arr: SecureArray, axis: int = None) -> SecureArray:
     """
     Returns the indices of the minimum values along an axis.
@@ -149,6 +156,7 @@ def argmin(arr: SecureArray, axis: int = None) -> SecureArray:
     return argmax(-arr, axis)
 
 
+@support_backends([PETAceBackendType.Duet])
 def sort(arr: SecureArray, axis: int = -1) -> SecureArray:
     """
     Returns a sorted copy of an array.

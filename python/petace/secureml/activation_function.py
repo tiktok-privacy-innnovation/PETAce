@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from petace.securenumpy import SecureArray, get_vm
+from petace.securenumpy import SecureArray, get_engine
 from petace.securenumpy import where, ones, zeros
 
 
@@ -34,7 +34,7 @@ def sigmoid(arr: SecureArray, mode: int = 0) -> SecureArray:
     if mode not in (0, 1):
         raise ValueError("mode must be 0 or 1.")
     if mode == 0:
-        vm = get_vm()
+        vm = get_engine()
         output = vm.new_share(arr.buffer.shape, arr.dtype)
         vm.execute_code("sigmoid", [arr.buffer, output])
         return SecureArray(output)

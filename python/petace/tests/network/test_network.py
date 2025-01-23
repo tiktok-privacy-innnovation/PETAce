@@ -26,3 +26,24 @@ class TestNetwork(NetworkTestBase):
             self.net.recv_data(ret, len(data))
             print(ret)
             assert bytes(ret) == data
+
+    # def test_agent(self, party):
+    #     print(NetScheme.AGENT)
+    #     net_params = NetParams()
+    #     if party == 0:
+    #         net_params.shared_topic = "j_20240601180000_1.psi"
+    #         net_params.remote_party = "party_b"
+    #         net_params.local_agent = "127.0.0.1:1235"
+    #     else:
+    #         net_params.shared_topic = "j_20240601180000_1.psi"
+    #         net_params.remote_party = "party_a"
+    #         net_params.local_agent = "127.0.0.1:1235"
+    #     net = NetFactory.get_instance().build(NetScheme.AGENT, net_params)
+    #     data = b"hello world"
+    #     if party == 0:
+    #         net.send_data(data, len(data))
+    #     else:
+    #         ret = bytearray(len(data))
+    #         net.recv_data(ret, len(data))
+    #         print(ret)
+    #         assert bytes(ret) == data

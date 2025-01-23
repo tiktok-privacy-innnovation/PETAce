@@ -12,20 +12,26 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os
+
+import pytest
 import numpy as np
 import numpy.testing as npt
 
 import petace.securenumpy as snp
+from petace.backend import PETAceBackendType
 from petace.tests.utils import SnpTestBase
 
 
+@pytest.mark.skipif(os.environ.get("PETACE_ENGINE_BACKEND", "duet") != PETAceBackendType.Duet,
+                    reason="unsupported backend")
 class TestMatmul(SnpTestBase):
 
     def test_cipher(self, party_id):
         # 2d @ 2d
         np.random.seed(43)
-        arr1 = snp.arange(10).reshape((2, 5))
-        arr2 = snp.arange(10).reshape((5, 2))
+        arr1 = snp.array(np.arange(10).reshape((2, 5)), 0)
+        arr2 = snp.array(np.arange(10).reshape((5, 2)), 0)
         res = arr1 @ arr2
         res_plain = res.reveal_to(0)
         if party_id == 0:
@@ -41,14 +47,14 @@ class TestMatmul(SnpTestBase):
 
         # 1d @ 2d
         c0 = snp.arange(5)
-        c1 = snp.arange(10).reshape((5, 2))
+        c1 = snp.array(np.arange(10).reshape((5, 2)), 0)
         res = c0 @ c1
         res_plain = res.reveal_to(0)
         if party_id == 0:
             npt.assert_almost_equal(res_plain, np.arange(5) @ np.arange(10).reshape((5, 2)))
 
         # 2d @ 1d
-        c0 = snp.arange(10).reshape((2, 5))
+        c0 = snp.array(np.arange(10).reshape((2, 5)), 0)
         c1 = snp.arange(5)
         res = c0 @ c1
         res_plain = res.reveal_to(0)

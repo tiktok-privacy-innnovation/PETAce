@@ -4,7 +4,7 @@
 
 Privacy-Enhancing Technologies via Applied Cryptography Engineering (PETAce) is a framework for privacy-preserving computing. It provides strong privacy guarantee by analytzing and computing cryptographically pseudonymized data without revealing hidden sensitive information. It consists of the following parts:
 
-- The "user interface" layer provides users with high-level programming interfaces for collaborative data analysis (SecureNumpy), joint SQL query (SecureSQL), and privacy-preserving machine learning (SecureML).
+- The "user interface" layer provides users with high-level programming interfaces for collaborative data analysis (SecureNumpy), joint SQL query (SecureSQL), and privacy-preserving machine learning (SecureML). It also supports large-scale data computing by combining Secure Multi-party Computation and parallel processing systems (such as Spark).
 
 - The "virtual machine" layer is responsible for parsing high-level language into secure multi-party computation (MPC) operators, and performing automatic optimization and scheduling.
 
@@ -13,7 +13,7 @@ Privacy-Enhancing Technologies via Applied Cryptography Engineering (PETAce) is 
 - The "primitive" layer consists of standard cryptographic algorithms and protocols, differential privacy mechanisms, and abstract network interfaces, etc.
 
 <figure>
-<img src='https://github.com/tiktok-privacy-innovation/PETAce/blob/2b59885bb557f6db0804c7c070a75b5c56b8fe3a/images/PETAce.png' align="middle"/>
+<img src='images/PETAce.png' align="middle"/>
 </figure>
 
 PETAce enables fast prototyping of ideas based on privacy-enhancing technologies, and we plan to integrate state-of-the-art research results into the PETAce in future releases. Its core modules are implemented in C++ and are modularized into the following repositories.
@@ -42,8 +42,6 @@ PETAce enables fast prototyping of ideas based on privacy-enhancing technologies
     - Network abstract interface
     - Socket network implementation
 
-- [Python API](python) provides Python APIs such as SecureNumpy, SecureML, SecureSQL, and SetOps.
-
 <!-- end-petace-overview -->
 
 ## Requirements
@@ -62,16 +60,17 @@ PETAce enables fast prototyping of ideas based on privacy-enhancing technologies
 | [Microsoft SEAL](https://github.com/microsoft/SEAL)                                     | 4.1.0          | Fully homomorphic encryption       |
 | [Google Logging](https://github.com/google/glog)                               | 0.4.0          | Logging                              |
 | [JSON for Modern C++(JSON)](https://github.com/nlohmann/json)                  | 3.10.1         | PSI parameter configuration          |
-| [PETAce-Solo](https://github.com/tiktok-privacy-innovation/PETAce-Solo)       | 0.3.0          | Cryptography primitives           |
-| [PETAce-Network](https://github.com/tiktok-privacy-innovation/PETAce-Network) | 0.3.0          | Network communication protocols   |
-| [PETAce-Verse](https://github.com/tiktok-privacy-innovation/PETAce-Verse)     | 0.3.0          | Primitive cryptographic protocols |
-| [PETAce-SetOps](https://github.com/tiktok-privacy-innovation/PETAce-SetOps)     | 0.3.0          | Set operations MPC protocol |
-| [PETAce-Verse](https://github.com/tiktok-privacy-innovation/PETAce-Duet)     | 0.3.0          | MPC protocol |
+| [PETAce-Solo](https://github.com/tiktok-privacy-innovation/PETAce-Solo)       | 0.4.0          | Cryptography primitives           |
+| [PETAce-Network](https://github.com/tiktok-privacy-innovation/PETAce-Network) | 0.4.0          | Network communication protocols   |
+| [PETAce-Verse](https://github.com/tiktok-privacy-innovation/PETAce-Verse)     | 0.4.0          | Primitive cryptographic protocols |
+| [PETAce-SetOps](https://github.com/tiktok-privacy-innovation/PETAce-SetOps)     | 0.4.0          | Set operations MPC protocol |
+| [PETAce-Verse](https://github.com/tiktok-privacy-innovation/PETAce-Duet)     | 0.4.0          | MPC protocol |
 
 | Optional dependency                                    | Tested version | Use                    |
 |--------------------------------------------------------|----------------|------------------------|
 | [Intel Paillier Cryptosystem Library (IPCL)](https://github.com/intel/pailliercryptolib)                                     | 495beaad1f6e70741f2b5cf1279cb919fd66d894| Paillier Encryption       |
 | [gRPC](https://github.com/grpc/grpc)                                          | 1.62.1          | Network communication              |
+| [CryptoDataEngine](https://github.com/tiktok-privacy-innovation/CryptoDataEngine) | 0.1.0 | Big data parallel support|
 
 ## Building PETAce
 
@@ -122,14 +121,14 @@ This project is licensed under the [Apache-2.0 License](LICENSE).
 
 To cite PETAce in academic papers, please use the following BibTeX entries.
 
-### Version 0.3.0
+### Version 0.4.0
 
 ```tex
     @misc{petace,
-        title = {PETAce (release 0.3.0)},
+        title = {PETAce (release 0.4.0)},
         howpublished = {\url{https://github.com/tiktok-privacy-innovation/PETAce}},
-        month = Jun,
-        year = 2024,
+        month = Jan,
+        year = 2025,
         note = {TikTok Pte. Ltd.},
         key = {PETAce}
     }

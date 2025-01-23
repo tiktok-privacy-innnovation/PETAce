@@ -12,8 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from petace.duet.pyduet import DuetVM as CppDuetVm
+from petace.backend import PETAceBackendType
 
-class DuetVMError(Exception):
 
-    def __init__(self, msg):
-        self.message = f"An error has occurred in duet vm:{msg}"
+class DuetVM(CppDuetVm):
+
+    @property
+    def type(self):
+        return PETAceBackendType.Duet

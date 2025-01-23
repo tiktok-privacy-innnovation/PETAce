@@ -12,12 +12,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os
+
+import pytest
 import numpy.testing as npt
 
 import petace.securenumpy as snp
+from petace.backend import PETAceBackendType
 from petace.tests.utils import SnpTestBase
 
 
+@pytest.mark.skipif(os.environ.get("PETACE_ENGINE_BACKEND", "duet") != PETAceBackendType.Duet,
+                    reason="unsupported backend")
 class TestReshape(SnpTestBase):
     """more test cases can be found in test_array/test_methods.py
     """
@@ -28,6 +34,8 @@ class TestReshape(SnpTestBase):
         npt.assert_equal(a1.shape, (2, 5))
 
 
+@pytest.mark.skipif(os.environ.get("PETACE_ENGINE_BACKEND", "duet") != PETAceBackendType.Duet,
+                    reason="unsupported backend")
 class TestResize(SnpTestBase):
     """more test cases can be found in test_array/test_methods.py
     """

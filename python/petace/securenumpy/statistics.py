@@ -15,11 +15,14 @@
 import typing as t
 import numpy as np
 
+from petace.backend import PETAceBackendType
+
 from .math import max, min, sum
-from .core import SecureArray
+from .core import SecureArray, support_backends
 from .exceptions import AxisError
 
 
+@support_backends([PETAceBackendType.Duet])
 def ptp(arr: SecureArray, axis: int = None) -> SecureArray:
     """
     Range of values (maximum - minimum) along an axis.
@@ -40,6 +43,7 @@ def ptp(arr: SecureArray, axis: int = None) -> SecureArray:
     return max(arr, axis) - min(arr, axis)
 
 
+@support_backends([PETAceBackendType.Duet])
 def average(arr: SecureArray, axis: int = None, weights: t.Union[SecureArray, np.ndarray] = None) -> SecureArray:
     """
     Compute the weighted average along the specified axis.
@@ -67,7 +71,7 @@ def average(arr: SecureArray, axis: int = None, weights: t.Union[SecureArray, np
     if not isinstance(weights, (np.ndarray, SecureArray)):
         raise TypeError(f"weights must be SecureArray or np.ndarray, got {type(weights)}")
 
-    if axis is not None and not (0 <= axis < arr.ndim):
+    if axis is not None and not 0 <= axis < arr.ndim:
         raise AxisError(axis, arr.ndim)
 
     if axis != 1:
@@ -77,10 +81,11 @@ def average(arr: SecureArray, axis: int = None, weights: t.Union[SecureArray, np
         if isinstance(weights, SecureArray):
             weights = weights.resize(arr.shape)
         else:
-            weights = np.resize(arr.shape)
+            weights = np.resize(arr, arr.shape)
     return sum(arr * weights, axis=axis) / sum(weights, axis=axis)
 
 
+@support_backends([PETAceBackendType.Duet])
 def mean(arr: SecureArray, axis: int = None) -> SecureArray:
     """
     Compute the arithmetic mean along the specified axis.
@@ -98,7 +103,7 @@ def mean(arr: SecureArray, axis: int = None) -> SecureArray:
     SecureArray
         Returns the average of the array elements.
     """
-    if axis is not None and not (0 <= axis < arr.ndim):
+    if axis is not None and not 0 <= axis < arr.ndim:
         raise AxisError(axis, arr.ndim)
 
     if axis is None:

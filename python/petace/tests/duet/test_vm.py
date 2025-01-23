@@ -19,7 +19,7 @@ from petace.tests.utils import SnpTestBase
 class TestVM(SnpTestBase):
 
     def test_send_recv(self, party_id):
-        vm = snp.get_vm()
+        vm = snp.get_engine().vm
         if party_id == 0:
             data = bytearray(b"Hello, World!")
             vm.send_buffer(data)
@@ -33,7 +33,7 @@ class TestVM(SnpTestBase):
             (1000,),
             (100000000, 1000),
         )
-        vm = snp.get_vm()
+        vm = snp.get_engine()
         for shape in shapes:
             if party_id == 0:
                 vm.send_shape(shape)

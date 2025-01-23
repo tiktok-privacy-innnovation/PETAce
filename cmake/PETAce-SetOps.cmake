@@ -15,7 +15,7 @@
 FetchContent_Declare(
     setops
     GIT_REPOSITORY https://github.com/tiktok-privacy-innovation/PETAce-SetOps.git
-    GIT_TAG        f4f47bf97ef3522ab3364373acdece56853176a0 # 0.3.0
+    GIT_TAG        94c2f6ce503ebff128b823c533a6272c864e0f63 # 0.4.0
 )
 FetchContent_GetProperties(setops)
 

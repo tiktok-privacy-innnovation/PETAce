@@ -12,21 +12,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from petace.duet.vm import VM
+from petace.engine import PETAceEngine
 
 
-class GlobalVm:
-    vm = None
+class GlobalPETAceEngine:
+    engine = None
 
 
-GLOBALVM = GlobalVm()
+GLOBALEngine = GlobalPETAceEngine()
 
 
-def set_vm(vm: VM):
-    GLOBALVM.vm = vm
+def set_engine(engine: PETAceEngine):
+    GLOBALEngine.engine = engine
 
 
-def get_vm() -> VM:
-    if GLOBALVM.vm is None:
-        raise RuntimeError("Global VM is not initialized")
-    return GLOBALVM.vm
+def get_engine() -> PETAceEngine:
+    if GLOBALEngine.engine is None:
+        raise RuntimeError("Global PETAceEngine is not initialized")
+    return GLOBALEngine.engine

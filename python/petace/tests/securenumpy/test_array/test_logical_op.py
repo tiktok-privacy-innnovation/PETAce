@@ -12,15 +12,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os
 import operator
 
+import pytest
 import numpy as np
 import numpy.testing as npt
 
 import petace.securenumpy as snp
+from petace.backend import PETAceBackendType
 from petace.tests.utils import SnpTestBase
 
 
+@pytest.mark.skipif(os.environ.get("PETACE_ENGINE_BACKEND", "duet") != PETAceBackendType.Duet,
+                    reason="unsupported backend")
 class TestLogicalOp(SnpTestBase):
     ops = {operator.and_, operator.or_, operator.xor}
 

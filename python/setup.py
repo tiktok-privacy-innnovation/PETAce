@@ -11,6 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 import os
 import re
 import sys
@@ -60,7 +61,7 @@ setuptools.setup(
     classifiers=[
         "Programming Language :: Python :: 3",
     ],
-    packages=setuptools.find_packages(exclude=["*tests*"]),
+    packages=setuptools.find_packages(),
     python_requires="==3.*",
     install_requires=install_requires,
     dependency_links=dependency_links,

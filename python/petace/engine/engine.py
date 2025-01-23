@@ -19,36 +19,15 @@ from typing import Union, List, Tuple
 
 import numpy as np
 
-from petace.duet.pyduet import DuetVM, Instruction
-from ._type import Private, Share, Public, PETAceType
-from .exception import DuetVMError
+from petace.engine import PETAceBuffer
+from petace.engine import Private, Share, Public
+from petace.engine import PETAceEngineError
+
+from petace.duet.pyduet import Instruction
+from petace.backend.bigdata import BigDataVM
 
 
-class PETAceBuffer:
-    """Array objects stored in C ++.
-
-    Attributes
-    ----------
-    shape : tuple of ints
-        Shape of created array.
-    dtype : np.dtype
-        Data type of created array.
-    data_type : PETAceType
-        Data type of created array.
-    reg_addr : int
-        Register address of created array.
-    """
-
-    def __init__(self, shape: Tuple[int], dtype: np.dtype, data_type: PETAceType, reg_addr: int):
-        self.shape = shape
-        self.dtype = dtype
-        self.data_type = data_type
-        self.reg_addr = reg_addr
-
-
-class VM(DuetVM):
-    """Virtual machine for PETAce.
-    """
+class PETAceEngine:
     _supported_operations = {
         "add",
         "sub",
@@ -82,29 +61,33 @@ class VM(DuetVM):
         "groupby_min",
     }
 
+    def __init__(self, vm):
+        self.vm = vm
+        self.backend_type = vm.type
+
     def __check_type(self, data, _type):
         if not isinstance(data, _type):
-            raise DuetVMError(f"Except {_type} but got {type(data)}")
+            raise PETAceEngineError(f"Except {_type} but got {type(data)}")
 
     def __check_dtype(self, dtype):
         if dtype not in (np.float64, np.bool_):
-            raise DuetVMError(f"unsupported dtype, {dtype}")
+            raise PETAceEngineError(f"unsupported dtype, {dtype}")
 
     def new_private(self, shape: Tuple[int], dtype: np.dtype, data: np.ndarray, party: int) -> PETAceBuffer:
         self.__check_dtype(dtype)
 
         if dtype == np.float64:
-            reg_addr = self.new_private_double_matrix(party)
+            reg_addr = self.vm.new_private_double_matrix(party)
             data_type = Private.DOUBLE
         elif dtype == np.bool_:
-            reg_addr = self.new_private_bool_matrix(party)
+            reg_addr = self.vm.new_private_bool_matrix(party)
             data_type = Private.BOOL
 
         if data is not None:
             if dtype == np.float64:
-                self.set_private_double_matrix(data, reg_addr)
+                self.vm.set_private_double_matrix(data, reg_addr)
             elif dtype == np.bool_:
-                self.set_private_bool_matrix(data, reg_addr)
+                self.vm.set_private_bool_matrix(data, reg_addr)
         return PETAceBuffer(shape, dtype, data_type, reg_addr)
 
     def new_share(self, shape: Tuple[int], dtype: np.dtype, share: np.ndarray = None) -> PETAceBuffer:
@@ -118,15 +101,15 @@ class VM(DuetVM):
                 raise ValueError(f"Only support 0d, 1d or 2d array, got {share.ndim} dimension")
 
         if dtype == np.float64:
-            reg_addr = self.new_airth_matrix()
+            reg_addr = self.vm.new_airth_matrix()
             data_type = Share.DOUBLE
             if share is not None:
-                self.set_airth_share_matrix(share, reg_addr)
+                self.vm.set_airth_share_matrix(share, reg_addr)
         elif dtype == np.bool_:
-            reg_addr = self.new_bool_matrix()
+            reg_addr = self.vm.new_bool_matrix()
             data_type = Share.BOOL
             if share is not None:
-                self.set_boolean_share_matrix(share, reg_addr)
+                self.vm.set_boolean_share_matrix(share, reg_addr)
 
         return PETAceBuffer(shape, dtype, data_type, reg_addr)
 
@@ -135,17 +118,17 @@ class VM(DuetVM):
         if isinstance(data, numbers.Integral):
             data = int(data)
             shape = ()
-            reg_addr = self.new_public_index()
+            reg_addr = self.vm.new_public_index()
             data_type = Public.IINT
             dtype = int
-            self.set_public_index(data, reg_addr)
+            self.vm.set_public_index(data, reg_addr)
         elif isinstance(data, numbers.Number):
             data = float(data)
             shape = ()
-            reg_addr = self.new_public_double()
+            reg_addr = self.vm.new_public_double()
             data_type = Public.IDOUBLE
             dtype = float
-            self.set_public_double(data, reg_addr)
+            self.vm.set_public_double(data, reg_addr)
         elif isinstance(data, np.ndarray):
             self.__check_dtype(data.dtype)
             dtype = data.dtype
@@ -153,49 +136,52 @@ class VM(DuetVM):
             if data.ndim < 2:
                 data = np.reshape(data, (1, -1))
             if dtype == np.float64:
-                reg_addr = self.new_public_double_matrix()
+                reg_addr = self.vm.new_public_double_matrix()
                 data_type = Public.DOUBLE
-                self.set_public_double_matrix(data, reg_addr)
+                self.vm.set_public_double_matrix(data, reg_addr)
             elif dtype == np.bool_:
-                reg_addr = self.new_public_bool_matrix()
+                reg_addr = self.vm.new_public_bool_matrix()
                 data_type = Public.BOOL
-                self.set_public_bool_matrix(data, reg_addr)
+                self.vm.set_public_bool_matrix(data, reg_addr)
 
         return PETAceBuffer(shape, dtype, data_type, reg_addr)
 
     def delete_buffer(self, obj: PETAceBuffer):
         self.__check_type(obj, PETAceBuffer)
-        self.delete_data(obj.reg_addr)
+        self.vm.delete_data(obj.reg_addr)
 
     def to_numpy(self, obj: PETAceBuffer) -> np.ndarray:
         self.__check_type(obj, PETAceBuffer)
         if obj.data_type not in Private.support_types():
-            raise DuetVMError(f"Only support private, unsupported data type, {obj.data_type}")
+            raise PETAceEngineError(f"Only support private, unsupported data type, {obj.data_type}")
         if obj.dtype == np.float64:
-            res = self.get_private_double_matrix(obj.reg_addr)
+            res = self.vm.get_private_double_matrix(obj.reg_addr)
         elif obj.dtype == np.bool_:
-            res = self.get_private_bool_matrix(obj.reg_addr)
+            res = self.vm.get_private_bool_matrix(obj.reg_addr)
         else:
-            raise DuetVMError(f"unsupported dtype, {obj.dtype}")
+            raise PETAceEngineError(f"unsupported dtype, {obj.dtype}")
         return res
 
     def to_share(self, obj: PETAceBuffer) -> np.ndarray:
         self.__check_type(obj, PETAceBuffer)
         if obj.data_type not in Share.support_types():
-            raise DuetVMError(f"Only support share, unsupported data type, {obj.data_type}")
+            raise PETAceEngineError(f"Only support share, unsupported data type, {obj.data_type}")
         if obj.dtype == np.float64:
-            res = self.get_airth_share_matrix(obj.reg_addr)
+            res = self.vm.get_airth_share_matrix(obj.reg_addr)
         elif obj.dtype == np.bool_:
-            res = self.get_boolean_share_matrix(obj.reg_addr)
+            res = self.vm.get_boolean_share_matrix(obj.reg_addr)
         return res
 
     def execute_code(self, operation: str, objs: List[PETAceBuffer]) -> None:
         if operation not in self._supported_operations:
-            raise DuetVMError(f"unsupported operation, {operation}")
+            raise PETAceEngineError(f"unsupported operation, {operation}")
         for obj in objs:
             self.__check_type(obj, PETAceBuffer)
-        inst = Instruction([operation, *[obj.data_type for obj in objs]])
-        self.exec_code(inst, [obj.reg_addr for obj in objs])
+        if isinstance(self.vm, BigDataVM):
+            inst = [operation, *[obj.data_type for obj in objs]]
+        else:
+            inst = Instruction([operation, *[obj.data_type for obj in objs]])
+        self.vm.exec_code(inst, [obj.reg_addr for obj in objs])
 
     def vstack(self, buffers: Union[List[PETAceBuffer], Tuple[PETAceBuffer]]) -> PETAceBuffer:
         if not isinstance(buffers, collections.Iterable):
@@ -206,7 +192,7 @@ class VM(DuetVM):
         first = buffers[0]
         for i in buffers[1:]:
             ret = self.new_share(shape, np.float64)
-            self.airth_share_vstack(first.reg_addr, i.reg_addr, ret.reg_addr)
+            self.vm.airth_share_vstack(first.reg_addr, i.reg_addr, ret.reg_addr)
             if first.reg_addr != buffers[0].reg_addr:
                 self.delete_buffer(first)
             first = ret
@@ -222,9 +208,9 @@ class VM(DuetVM):
         for i in buffers[1:]:
             ret = self.new_share(shape, np.float64)
             if len(first.shape) == 1:
-                self.airth_share_vstack(first.reg_addr, i.reg_addr, ret.reg_addr)
+                self.vm.airth_share_vstack(first.reg_addr, i.reg_addr, ret.reg_addr)
             else:
-                self.airth_share_hstack(first.reg_addr, i.reg_addr, ret.reg_addr)
+                self.vm.airth_share_hstack(first.reg_addr, i.reg_addr, ret.reg_addr)
             if first.reg_addr != buffers[0].reg_addr:
                 self.delete_buffer(first)
             first = ret
@@ -236,7 +222,7 @@ class VM(DuetVM):
                    party: int = 0,
                    dtype: np.dtype = np.float64) -> PETAceBuffer:
         if dtype not in (np.float64, np.bool_):
-            raise DuetVMError(f"unsupported dtype, {dtype}")
+            raise PETAceEngineError(f"unsupported dtype, {dtype}")
         if isinstance(data, np.ndarray):
             data = data.astype(dtype)
             if data.ndim < 2:
@@ -249,15 +235,15 @@ class VM(DuetVM):
 
     def send_shape(self, shape: tuple):
         ndim = len(shape)
-        self.send_buffer(bytearray(struct.pack('i', ndim)))
+        self.vm.send_buffer(bytearray(struct.pack('i', ndim)))
         if ndim > 0:
-            self.send_buffer(bytearray(struct.pack('i' * ndim, *shape)))
+            self.vm.send_buffer(bytearray(struct.pack('i' * ndim, *shape)))
 
     def recv_shape(self) -> tuple:
-        ndim = struct.unpack('i', bytes(self.recv_buffer(4)))[0]
+        ndim = struct.unpack('i', bytes(self.vm.recv_buffer(4)))[0]
         if ndim == 0:
             return ()
-        buffer = bytes(self.recv_buffer(4 * ndim))
+        buffer = bytes(self.vm.recv_buffer(4 * ndim))
         shape = struct.unpack('i' * ndim, buffer)
         return shape
 
@@ -274,3 +260,19 @@ class VM(DuetVM):
         self.execute_code("reshape", [buffer, row_public, col_public, ret])
         self.delete_buffer(buffer)
         return ret
+
+    def get_debug_shape(self, buffer: PETAceBuffer) -> Tuple[int]:
+        if buffer.data_type == "am":
+            return self.vm.get_airth_share_matrix_shape(buffer.reg_addr)
+        if buffer.data_type == "bm":
+            return self.vm.get_bool_share_matrix_shape(buffer.reg_addr)
+        raise TypeError("unsupported share type")
+
+    def get_matrix_block(self, buffer: PETAceBuffer, new_shape, row_start: int, col_start: int, row_num: int,
+                         col_num: int) -> PETAceBuffer:
+        ret = self.new_share(new_shape, buffer.dtype)
+        self.vm.airth_share_matrix_block(buffer.reg_addr, ret.reg_addr, row_start, col_start, row_num, col_num)
+        return ret
+
+    def party_id(self) -> int:
+        return self.vm.party_id()

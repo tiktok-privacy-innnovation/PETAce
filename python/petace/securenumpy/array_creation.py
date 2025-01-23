@@ -12,14 +12,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from typing import Union
 import numbers
 
 import numpy as np
+from petace.backend import PETAceBackendType
+from crypto_data_engine import CSVDataset
 
-from .core import SecureArray, get_vm
+from .core import SecureArray, get_engine, support_backends
 
 
-def array(data: np.ndarray, party: int, dtype: np.dtype = np.float64) -> SecureArray:
+def array(data: Union[np.ndarray, str, "CSVDataset"], party: int, dtype: np.dtype = np.float64) -> SecureArray:
     """
     Create an SecureArray.
 
@@ -38,19 +41,17 @@ def array(data: np.ndarray, party: int, dtype: np.dtype = np.float64) -> SecureA
     out : SecureArray
         The SecureArray.
     """
-    vm = get_vm()
+    vm = get_engine()
     if vm.party_id() == party:
-        if not isinstance(data, np.ndarray):
-            raise TypeError(f"Only support numpy.ndarray, got {type(data)}")
         if dtype not in (np.float64, np.bool_):
             raise TypeError(f"Unsupported dtype: {dtype}")
-        shape = data.shape
-        vm.send_shape(data.shape)
-
-        if not isinstance(data, np.ndarray):
-            raise TypeError(f"Only support numpy.ndarray, got {type(data)}")
-        if data.ndim > 2:
-            raise ValueError(f"Only support 0d, 1d or 2d array, got {data.ndim} dimension")
+        if isinstance(data, str):
+            data = vm.vm.engine_ctx.csv_dataset(file_path=data, partition_num=vm.vm.partition_num)
+        if isinstance(data, np.ndarray):
+            shape = data.shape
+        else:
+            shape = data.shape()
+        vm.send_shape(shape)
     else:
         shape = vm.recv_shape()
 
@@ -58,6 +59,7 @@ def array(data: np.ndarray, party: int, dtype: np.dtype = np.float64) -> SecureA
     return SecureArray(share_matrix)
 
 
+@support_backends([PETAceBackendType.Duet])
 def fromshare(share: np.ndarray, dtype: np.dtype) -> SecureArray:
     """
     Recover share to SecureArray.
@@ -77,11 +79,12 @@ def fromshare(share: np.ndarray, dtype: np.dtype) -> SecureArray:
         raise TypeError(f"Only support numpy.ndarray, got {type(share)}")
     if share.dtype != np.int64:
         raise TypeError(f"Only support share with numpy.int64, got {share.dtype}")
-    vm = get_vm()
+    vm = get_engine()
     buffer = vm.new_share(share.shape, dtype, share)
     return SecureArray(buffer)
 
 
+@support_backends([PETAceBackendType.Duet])
 def empty(shape, party: int = 0, dtype: np.dtype = None) -> SecureArray:
     """Return a new array of given shape and vm, without initializing entries.
 

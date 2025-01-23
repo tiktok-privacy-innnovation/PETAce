@@ -26,7 +26,7 @@ class TestCompOp(SnpTestBase):
 
     def test_plain(self, party_id):
         np.random.seed(43)
-        c0 = snp.arange(10).reshape((2, 5))
+        c0 = snp.array(np.arange(10).reshape((2, 5)), 0)
         p0 = np.random.random((2, 5))
         for op in self.ops:
             print(op.__name__)
@@ -40,7 +40,7 @@ class TestCompOp(SnpTestBase):
 
     def test_scalar(self, party_id):
         np.random.seed(43)
-        c0 = snp.arange(10).reshape((2, 5))
+        c0 = snp.array(np.arange(10).reshape((2, 5)), 0)
         a = 1
         for op in self.ops:
             print(op.__name__)

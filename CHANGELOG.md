@@ -8,3 +8,9 @@
 - Added Python API to Network.
 - Enhanced the Duet Python API, now offering SecureNumpy, a Numpy-like MPC interface.
 - Added SecureML and SecureSQL, providing machine learning and SQL-related functions based on SecureNumpy.
+
+## Version 0.4.0
+
+### Features
+
+- Support large-scale data computing by combining Secure Multi-party Computation and parallel processing systems.

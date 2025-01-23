@@ -22,7 +22,7 @@ from petace.tests.utils import SnpTestBase
 class TestReveal(SnpTestBase):
 
     def test_float64(self, party_id):
-        data_a = np.array([[4, 4], [4, 4]], dtype=np.float64)
+        data_a = np.array([[4, 4], [4, 4], [4, 4]], dtype=np.float64)
 
         p0 = snp.array(data_a, 0)
         p0_plain = p0.reveal_to(0)

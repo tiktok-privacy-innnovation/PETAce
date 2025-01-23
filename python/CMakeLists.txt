@@ -14,14 +14,14 @@
 
 cmake_minimum_required(VERSION 3.14)
 
-project(PETAcePython VERSION 0.3.0 LANGUAGES CXX)
+project(PETAcePython VERSION 0.4.0 LANGUAGES CXX)
 
 # If not called from root CMakeLists.txt
 if(NOT DEFINED PETACE_BUILD_PYTHON)
     set(PETACE_BUILD_PYTHON ON)
 
-    find_package(PETAce-SetOps 0.3.0 EXACT REQUIRED)
-    find_package(PETAce-Network 0.3.0 EXACT REQUIRED)
+    find_package(PETAce-SetOps 0.4.0 EXACT REQUIRED)
+    find_package(PETAce-Network 0.4.0 EXACT REQUIRED)
 
     add_compile_options(-msse4.2 -Wno-ignored-attributes -mavx)
 

@@ -12,16 +12,22 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os
+
+import pytest
 import numpy as np
 import numpy.testing as npt
 
 import petace.securenumpy as snp
+from petace.backend import PETAceBackendType
 from petace.tests.utils import SnpTestBase
 
 
+@pytest.mark.skipif(os.environ.get("PETACE_ENGINE_BACKEND", "duet") != PETAceBackendType.Duet,
+                    reason="unsupported backend")
 class TestConcatenate(SnpTestBase):
 
-    def test_None_axis(self, party_id):
+    def test_none_axis(self, party_id):
         # 0d, 1d, 2d
         test_cases = (
             (np.array(1), np.array(2)),

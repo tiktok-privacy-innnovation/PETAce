@@ -18,3 +18,4 @@ from .aggregate import (
     groupby_min,
     groupby_sum,
 )
+from .onehot_encode import (onehot_encode, unique)

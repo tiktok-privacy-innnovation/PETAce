@@ -12,13 +12,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os
+
+import pytest
 import numpy as np
 import numpy.testing as npt
 
 import petace.securenumpy as snp
+from petace.backend import PETAceBackendType
 from petace.tests.utils import SnpTestBase
 
 
+@pytest.mark.skipif(os.environ.get("PETACE_ENGINE_BACKEND", "duet") != PETAceBackendType.Duet,
+                    reason="unsupported backend")
 class TestMax(SnpTestBase):
 
     def test_axis0(self, party_id):
@@ -32,6 +38,8 @@ class TestMax(SnpTestBase):
             npt.assert_almost_equal(max_value_plain, np.max(data, axis=0), decimal=5)
 
 
+@pytest.mark.skipif(os.environ.get("PETACE_ENGINE_BACKEND", "duet") != PETAceBackendType.Duet,
+                    reason="unsupported backend")
 class TestMin(SnpTestBase):
 
     def test_axis0(self, party_id):

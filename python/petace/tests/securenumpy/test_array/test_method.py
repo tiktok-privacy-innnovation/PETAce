@@ -12,13 +12,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os
+
+import pytest
 import numpy as np
 import numpy.testing as npt
 
 import petace.securenumpy as snp
+from petace.backend import PETAceBackendType
 from petace.tests.utils import SnpTestBase
 
 
+@pytest.mark.skipif(os.environ.get("PETACE_ENGINE_BACKEND", "duet") != PETAceBackendType.Duet,
+                    reason="unsupported backend")
 class TestReshape(SnpTestBase):
 
     def test_2d(self, party_id):
@@ -77,6 +83,8 @@ class TestReshape(SnpTestBase):
         npt.assert_equal(res2.shape, (1, 3))
 
 
+@pytest.mark.skipif(os.environ.get("PETACE_ENGINE_BACKEND", "duet") != PETAceBackendType.Duet,
+                    reason="unsupported backend")
 class TestFlatten(SnpTestBase):
 
     def test_basic(self, party_id):
@@ -90,6 +98,8 @@ class TestFlatten(SnpTestBase):
             npt.assert_almost_equal(res_plain, a1.flatten())
 
 
+@pytest.mark.skipif(os.environ.get("PETACE_ENGINE_BACKEND", "duet") != PETAceBackendType.Duet,
+                    reason="unsupported backend")
 class TestTranspose(SnpTestBase):
 
     def test_2d(self, party_id):
@@ -122,6 +132,8 @@ class TestTranspose(SnpTestBase):
             npt.assert_almost_equal(res1_plain, a1.transpose())
 
 
+@pytest.mark.skipif(os.environ.get("PETACE_ENGINE_BACKEND", "duet") != PETAceBackendType.Duet,
+                    reason="unsupported backend")
 class TestResize(SnpTestBase):
 
     def test_copies(self, party_id):
